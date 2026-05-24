@@ -1,12 +1,162 @@
 Part 1:
 
 1. What is the purpose of a NAT gateway, and what are some of its use cases?
+A NAT Gateway allows resources in a private subnet to access the internet without exposing those resources directly to inbound internet traffic.
+
+For example, if I have EC2 instances running in a private subnet, they may still need outbound internet access for things like downloading OS updates, pulling Docker images, or connecting to external APIs. Instead of assigning public IPs to those servers, I route their outbound traffic through a NAT Gateway that sits in a public subnet.
+
+The main use cases are:
+
+Allowing private servers to access the internet securely
+Keeping backend systems isolated from direct public access
+Supporting patch management and software downloads
+Enabling outbound connectivity for application servers in multi-tier architectures
+
+I usually associate NAT Gateways with security best practices because they reduce the attack surface while still allowing controlled outbound communication.
 2. How do you decide which load balancer is best suited for an application?
+I normally start by understanding the application architecture and traffic type.
+
+If the application needs advanced HTTP or HTTPS routing features like:
+
+path-based routing
+host-based routing
+SSL termination
+WebSocket support
+
+then I would typically choose an Application Load Balancer (ALB).
+
+If the requirement is high performance with very low latency at Layer 4 using TCP or UDP traffic, then I would use a Network Load Balancer (NLB).
+
+I also consider:
+
+scalability requirements
+protocol support
+security requirements
+session persistence needs
+cost
+whether containerized workloads are involved
+
+For example:
+
+A microservices-based web application usually fits well with an ALB
+A gaming service or real-time application that needs ultra-low latency is better suited for an NLB
+
+So the decision mainly depends on traffic type, routing complexity, and performance requirements.
 3. What are the key features of the Nginx service?
+NGINX is widely used as a web server, reverse proxy, and load balancer.
+
+Some key features are:
+
+Reverse proxy functionality
+Load balancing
+High performance and low memory usage
+SSL/TLS termination
+Caching support
+URL rewriting and redirects
+Static content serving
+Support for high concurrency
+Integration with containerized and microservices environments
+
+One reason Nginx is popular is its event-driven architecture, which allows it to handle a very large number of simultaneous connections efficiently.
+
+In production environments, I’ve commonly seen it used in front of application servers like Node.js, Java, or Python services to improve performance and distribute traffic.
 4. What are the differences between a Network Load Balancer and an Application Load Balancer?
+The main difference is the OSI layer at which they operate.
+
+An Application Load Balancer operates at Layer 7, which is the application layer. It understands HTTP and HTTPS traffic and can make routing decisions based on URLs, headers, hostnames, and paths.
+
+A Network Load Balancer operates at Layer 4, which is the transport layer. It routes traffic based on TCP or UDP packets and focuses more on speed and performance.
+
+Key differences:
+
+Application Load Balancer (ALB)	Network Load Balancer (NLB)
+Layer 7	Layer 4
+Supports HTTP/HTTPS	Supports TCP/UDP
+Path-based routing	No content-aware routing
+Better for web apps and APIs	Better for high-performance workloads
+SSL termination supported	Pass-through or TLS support
+More intelligent routing	Lower latency and higher throughput
+
+So in simple terms:
+
+ALB is better for smart web traffic routing
+NLB is better for ultra-fast and stable network traffic handling
 5. Why is a DynamoDB table used to lock the Terraform state file?
+Terraform uses state files to track infrastructure resources.
+
+When teams work collaboratively, multiple users or CI/CD pipelines might try to modify the same infrastructure simultaneously. That can corrupt the Terraform state file or create inconsistent infrastructure changes.
+
+A DynamoDB table is used for state locking to prevent concurrent operations.
+
+For example:
+
+If one engineer is running terraform apply
+Another engineer cannot modify the same state until the lock is released
+
+This ensures:
+
+consistency
+safe collaboration
+prevention of race conditions
+protection against state corruption
+
+Typically this is used alongside storing the Terraform state in an S3 backend.
 6. How can we manage the Terraform state file effectively?
+Some best practices I follow for Terraform state management are:
+
+Store the state remotely instead of locally
+usually in an S3 bucket
+Enable versioning on the S3 bucket
+Use DynamoDB for state locking
+Restrict access using IAM policies
+Separate state files by environment
+dev, staging, production
+Avoid manually editing the state file
+Use encrypted storage for security
+Regularly back up state files
+Use Terraform workspaces or separate backends when appropriate
+
+I also make sure sensitive values are protected because the state file can contain secrets or infrastructure metadata.
+
+Good state management is important for team collaboration, reliability, and disaster recovery.
+
+
 7. If you encounter an error with the `terraform plan` command, how would you troubleshoot it? What steps would you take?
+If terraform plan fails, I usually troubleshoot in a structured way.
+
+First, I carefully read the error message because Terraform errors are often descriptive.
+
+My troubleshooting steps would be:
+
+Validate the Terraform syntax
+terraform validate
+Check formatting issues
+terraform fmt
+Verify provider authentication and credentials
+AWS credentials
+IAM permissions
+environment variables
+Reinitialize Terraform if providers or modules are corrupted
+terraform init
+Check variable values
+missing variables
+incorrect types
+wrong environment configs
+Review recent code changes
+compare with previous working versions
+check Git history
+Enable detailed logs if needed
+TF_LOG=DEBUG terraform plan
+Verify backend connectivity
+S3 access
+DynamoDB lock issues
+network connectivity
+Check resource dependencies and module references
+
+If the issue still persists, I would isolate the problem by testing smaller modules or using targeted plans.
+
+In an actual production environment, I also make sure no unintended infrastructure changes are introduced before proceeding with an apply operation.
+
 8. What stages are available in a Jenkins pipeline? How do you configure a webhook for auto-triggering builds?
 9. What DevSecOps tools have you used? How do you secure applications using these tools?
 10. How do you manage secrets in a Jenkins pipeline?
