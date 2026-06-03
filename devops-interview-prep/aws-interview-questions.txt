@@ -268,6 +268,69 @@ docker build -t nodejs-app .
 docker run -d -p 3000:3000 nodejs-app
 14. Briefly explain Kubernetes architecture, covering each component and its use case.
 
+Kubernetes architecture consists of two main parts: the Control Plane (Master Node) and the Worker Nodes.
+
+1. Control Plane Components
+
+The control plane manages the entire Kubernetes cluster and ensures the desired state is maintained.
+
+API Server
+
+The API Server is the entry point to the cluster. All commands from users, CI/CD pipelines, and cluster components go through the API Server.
+
+Use Case: Receives requests such as creating deployments, scaling applications, and querying cluster status.
+
+etcd
+
+etcd is a distributed key-value store that holds all cluster configuration and state information.
+
+Use Case: Stores information about nodes, pods, services, secrets, and deployments.
+
+Scheduler
+
+The Scheduler decides which worker node should run a newly created pod.
+
+Use Case: Selects the best node based on available CPU, memory, affinity rules, and resource requirements.
+
+Controller Manager
+
+The Controller Manager runs controllers that continuously monitor the cluster and ensure the actual state matches the desired state.
+
+Use Case: Automatically replaces failed pods, maintains replica counts, and handles node failures.
+
+Cloud Controller Manager (Optional)
+
+Integrates Kubernetes with cloud providers like AWS, Azure, or GCP.
+
+Use Case: Manages cloud resources such as load balancers, storage volumes, and node provisioning.
+
+2. Worker Node Components
+
+Worker nodes are where the application workloads actually run.
+
+Kubelet
+
+Kubelet is an agent running on every worker node. It receives instructions from the API Server and ensures containers are running as expected.
+
+Use Case: Starts, stops, and monitors pods on the node.
+
+Container Runtime
+
+The container runtime runs containers on the node.
+
+Examples:
+
+containerd
+CRI-O
+
+Use Case: Pulls container images and executes containers.
+
+Kube Proxy
+
+Kube Proxy manages networking rules and enables communication between pods and services.
+
+Use Case: Routes traffic to the correct pod and supports service discovery.
+
 
 15. How do you manage connectivity between multiple pods in a Kubernetes cluster?
 
