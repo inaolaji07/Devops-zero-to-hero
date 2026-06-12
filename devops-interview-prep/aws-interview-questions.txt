@@ -562,14 +562,152 @@ It reinforced the importance of observability, automation, and controlled releas
 
 Part 2: 
 1. What are your daily responsibilities as a DevOps engineer?
+In my current role, my daily responsibilities involve managing CI/CD pipelines, monitoring infrastructure, supporting application deployments, and ensuring system reliability.
+
+A typical day includes:
+
+Monitoring production environments
+Troubleshooting deployment issues
+Managing AWS infrastructure using Terraform
+Supporting Kubernetes clusters
+Reviewing CI/CD pipeline failures
+Implementing security and compliance checks
+Working with development teams to automate deployments
+Monitoring logs, metrics, and alerts using Grafana and Prometheus
+
+I also focus on reducing manual effort through automation and improving deployment efficiency.
 2. Which DevOps tools are you proficient with?
+I've worked extensively with:
+
+CI/CD
+Jenkins
+GitLab CI/CD
+GitHub Actions
+Infrastructure as Code
+Terraform
+Ansible
+Containers
+Docker
+Kubernetes
+Amazon EKS
+Monitoring
+Prometheus
+Grafana
+Cloud
+Amazon Web Services services including EC2, S3, IAM, VPC, RDS, CloudWatch, Route 53, ALB, NLB, Lambda, and EKS.
 3. Can you describe the CI/CD workflow in your project?
+Our CI/CD workflow starts when a developer pushes code to Git.
+
+The process is:
+
+Code commit to Git repository
+CI pipeline triggers automatically
+Code quality checks run (SonarQube)
+Unit tests execute
+Security scans run
+Docker image is built
+Image is pushed to registry
+Terraform or Kubernetes manifests are validated
+Deployment to development environment
+Automated testing
+Deployment to staging
+Production deployment after approval
+
+This ensures quality, consistency, and faster releases.
 4. How do you handle the continuous delivery (CD) aspect in your projects?
+"I use GitHub Actions for Continuous Delivery. After code is merged into the main branch, GitHub Actions automatically builds the Docker image, runs security and quality checks, pushes the image to Amazon ECR, and deploys it to EKS. We use environment approvals, rolling deployments, health checks, and automated rollback mechanisms to ensure safe and reliable releases."
+
+How I Ensure Safe Delivery
+Use separate environments (Dev → Staging → Production)
+Store secrets in GitHub Secrets or AWS Secrets Manager
+Use environment approvals before production deployment
+Perform vulnerability scanning before deployment
+Use rolling updates or blue-green deployments
+Monitor deployments using Prometheus and Grafana
+Enable rollback if health checks fail
 5. What methods do you use to check for code vulnerabilities?
+I use multiple layers of security scanning.
+
+Static Code Analysis
+SonarQube
+Dependency Scanning
+OWASP Dependency Check
+Snyk
+Container Scanning
+Trivy
+Infrastructure Scanning
+Checkov
+tfsec
+Runtime Monitoring
+Falco
+
+Security checks are integrated into CI/CD pipelines so vulnerabilities are detected before deployment.
 6. What AWS services are you proficient in?
+I have hands-on experience with:
+
+Compute
+Amazon EC2
+AWS Lambda
+Amazon EKS
+Storage
+Amazon S3
+Amazon EFS
+Database
+Amazon RDS
+Amazon DynamoDB
+Networking
+Amazon VPC
+ALB
+NLB
+Route 53
+Security
+IAM
+KMS
+Secrets Manager
+Security Groups
+Monitoring
+CloudWatch
+CloudTrail
 7. How would you access data in an S3 bucket from Account A when your application is running on an EC2 instance in Account B?
+I would use a cross-account IAM role.
+
+Process:
+Create IAM Role in Account A.
+Allow Account B to assume the role.
+Attach S3 permissions to the role.
+EC2 instance assumes the role using STS.
+Application accesses S3 using temporary credentials.
+
+This is more secure than sharing access keys.
 8. How do you provide access to an S3 bucket, and what permissions need to be set on the bucket side?
+Access can be granted using:
+
+IAM policies
+Bucket policies
+ACLs (less common)
+
+For cross-account access:
+
+Bucket Policy
+
+Must allow:
+
+{
+  "Effect": "Allow",
+  "Principal": {
+    "AWS": "arn:aws:iam::ACCOUNT-ID:role/ApplicationRole"
+  },
+  "Action": [
+    "s3:GetObject"
+  ],
+  "Resource": "arn:aws:s3:::bucket-name/*"
+}
+
+The IAM role also needs matching permissions.
+
+Both sides must allow access.
 9. How can Instance 2, with a static IP, communicate with Instance 1, which is in a private subnet and mapped to a multi-AZ load balancer?
+
 10. For an EC2 instance in a private subnet, how can it verify and download required packages from the internet without using a NAT gateway or bastion host? Are there any other AWS services that can facilitate this?
 11. What is the typical latency for a load balancer, and if you encounter high latency, what monitoring steps would you take?
 12. If your application is hosted in S3 and users are in different geographic locations, how can you reduce latency?
